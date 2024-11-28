@@ -1,0 +1,60 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    if: >-
+      github.event.head_commit.author.email != 'auto@version' && 
+      github.event.head_commit.committer.email != 'auto@version'
+    name: Python ${{ matrix.python-version }} on ${{ startsWith(matrix.os, 'macos-') && 'macOS' || startsWith(matrix.os, 'windows-') && 'Windows' || 'Linux' }}
+    runs-on: ${{ matrix.os }}
+    env:
+      DJANGO_SECRET_KEY: $RANDOM
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]  #, windows-latest, macos-latest]
+        python-version: ['3.10', '3.11', '3.12']
+#        django: ['Django>=4.0,<4.1', 'Django>=4.1,<4.2', 'Django>=4.2,<4.3']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
+
+    - name: Install Hatch
+      run: |
+        pip install --upgrade pip
+        pip install hatch
+
+    - name: Run Linter
+      run: hatch run lint:all
+
+    - name: Run tests
+      run: hatch run +py=${{ matrix.python-version }} all:cov
+
+    - name: Combine
+      run: |
+        export COVERED_DISPLAY=$(python -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
+        echo "COVERED_DISPLAY=$COVERED_DISPLAY" >> $GITHUB_ENV
+
+    - name: Create the Badge
+      uses: schneegans/dynamic-badges-action@v1.6.0
+      with:
+        auth: ${{ secrets.COVERAGE_TOKEN }}
+        gistID: 2a3a0ecdb91bdb16a64ecc7f2fb03f25
+        filename: covbadge.json
+        label: coverage
+        message: ${{ env.COVERED_DISPLAY }}%
+        valColorRange: ${{ env.COVERED_DISPLAY }}
+        maxColorRange: 90
+        minColorRange: 50
