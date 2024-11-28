@@ -48,7 +48,7 @@ jobs:
         echo "COVERED_DISPLAY=$COVERED_DISPLAY" >> $GITHUB_ENV
 
     - name: Create the Badge
-      uses: schneegans/dynamic-badges-action@v1.6.0
+      uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.COVERAGE_TOKEN }}
         gistID: 2a3a0ecdb91bdb16a64ecc7f2fb03f25
