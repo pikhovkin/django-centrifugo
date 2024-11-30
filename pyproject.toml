@@ -7,7 +7,7 @@ name = "django-centrifugo"
 dynamic = ["version"]
 description = "Implementation of an outbox model for Centrifugo"
 readme = "README.md"
-requires-python = ">=3.10, <3.13"
+requires-python = ">=3.10, <3.14"
 license = "MIT"
 keywords = [
   "django",
@@ -34,6 +34,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: System :: Monitoring",
   "Topic :: Utilities",
 ]
@@ -87,7 +88,7 @@ matrix.django.dependencies = [
 ]
 
 [[tool.hatch.envs.all.matrix]]
-python = ["3.10", "3.11", "3.12"]
+python = ["3.10", "3.11", "3.12", "3.13"]
 django = ["4.0", "4.1", "4.2", "5.0", "5.1"]
 
 [tool.hatch.envs.typing]
